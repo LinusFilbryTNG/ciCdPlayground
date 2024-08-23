@@ -1,12 +1,6 @@
 name: CI Pipeline
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, workflow_dispatch]
 
 jobs:
   build:
@@ -19,7 +13,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Specify the Node.js version you need
+          node-version: '20'  # Specify the Node.js version you need
 
       - name: Install Yarn
         run: npm install -g yarn
@@ -35,3 +29,10 @@ jobs:
 
       - name: Run end-to-end tests
         run: yarn test:e2e
+
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: |
+            reports/*.xml
